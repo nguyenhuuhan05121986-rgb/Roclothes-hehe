@@ -19662,4 +19662,40 @@ else
 		RoClothes(PS:WaitForChild("lerp()"))
 	end
 end
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- insert the sound IDs in one of this table below
+local soundIds = {
+    "rbxassetid://4792884617",
+    "rbxassetid://4792915329",
+    "rbxassetid://4792901644",
+    "rbxassetid://4792904673",
+    "rbxassetid://4792899013",
+    "rbxassetid://4792913155"
+}
+
+-- Track health
+local lastHealth = humanoid.Health
+
+humanoid.HealthChanged:Connect(function(newHealth)
+    if newHealth < lastHealth then
+        -- Player took damage → pick random sound
+        local id = soundIds[math.random(1, #soundIds)]
+        local s = Instance.new("Sound")
+        s.SoundId = id
+        s.Volume = 2.5
+        s.Parent = hrp
+
+        -- Play and auto‑destroy when finished
+        s:Play()
+        s.Ended:Connect(function()
+            s:Destroy()
+        end)
+    end
+    lastHealth = newHealth
+end)
 return
